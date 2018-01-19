@@ -1,6 +1,13 @@
 package xslreporter;
 
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
+import org.commonmark.renderer.html.HtmlRenderer;
+
 public class Functions {
+
+	static Parser parser;
+	static HtmlRenderer renderer;
 
 	static public String upper(String value) {
 		return value.toUpperCase();
@@ -14,6 +21,14 @@ public class Functions {
 		return value.length();
 	}
 
+	static public String markdown(String value) {
+		if (parser == null) parser = Parser.builder().build();
+		if (renderer == null) renderer = HtmlRenderer.builder().build();			
+		Node document = parser.parse(value);
+		String result = renderer.render(document);
+		return result;
+	}
+	
 	enum TextMode {NORMAL, LIST, CODE};
 
 	static public String multiline(String value) {
