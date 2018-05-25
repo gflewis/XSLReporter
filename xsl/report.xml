@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report name="release" 
+      xslData="/Users/giles/workspace/XSLReporter/xsl/data2.xsl"
+      xslHtml="/Users/giles/workspace/XSLReporter/xsl/html2.xsl"
+      workDir="/Users/giles/workspace/XSLReporter/data/"      
+      cssFile="/Users/giles/workspace/XSLReporter/css/storyDoc.css"
+      cssXmlFile="storyDoc_css.xml"
+      dataFile="${release}.xml"
+      htmlReport="${release}.html">
+  <extract tag="release" table="rm_release" query="number=${release}"
+    file="release.release.xml" />
+  <extract tag="story" table="rm_story" query="release.number=${release}"
+    file="release.story.xml" />
+</report>
