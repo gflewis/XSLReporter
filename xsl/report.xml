@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report name="release"
-      xslData="/Users/mit/workspace/XSLReporter/xsl/data2.xsl"
-      xslHtml="/Users/mit/workspace/XSLReporter/xsl/html2.xsl"
-      workDir="/Users/mit/workspace/XSLReporter/data/"
-      cssFile="/Users/mit/workspace/XSLReporter/css/storydoc.css"
+      xslData="xsl/data2.xsl"
+      xslHtml="xsl/html2.xsl"
+      workDir="/Users/gflewis/workspace/XSLReporter/data/"
+      cssFile="css/storydoc.css"
       cssXmlFile="storydoc_css.xml"
       dataFile="${release}.xml"
       htmlReport="${release}.html">

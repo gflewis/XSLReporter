@@ -35,7 +35,12 @@
         </tr>
         <tr class="row-2col">
           <th class="labl">Release</th>
-          <td class="data"><xsl:value-of select="number" /></td>
+          <td class="data">
+            <xsl:call-template name="tasklink">
+              <xsl:with-param name="number" select="number"/>
+              <xsl:with-param name="sys_id" select="sys_id"/>
+            </xsl:call-template>
+          </td>          
           <td class="gully" />
           <th class="labl">Status</th>
           <td class="data"><xsl:value-of select="state" /></td>
@@ -53,17 +58,10 @@
         <tr class="row-2col">
 	        <th class="labl">Number</th>
           <td class="data">
-            <xsl:variable name="base">
-              <xsl:text>mit.service-now.com/rm_story.do?sys_id=</xsl:text>
-            </xsl:variable>
-            <xsl:variable name="addr"
-              select="concat('https://',$base,sys_id)" />
-            <xsl:element name="a">
-              <xsl:attribute name="href">
-                <xsl:value-of select="$addr" />
-              </xsl:attribute>
-              <xsl:value-of select="number" />
-            </xsl:element>
+            <xsl:call-template name="tasklink">
+              <xsl:with-param name="number" select="number"/>
+              <xsl:with-param name="sys_id" select="sys_id"/>
+            </xsl:call-template>
           </td>
 	        <td class="gully"/>
 	        <th class="labl">Status</th>
@@ -105,6 +103,22 @@
      WARNING: Unmatched element: <xsl:value-of select="name()"/>
     </xsl:message>
     <xsl:apply-templates/>
+  </xsl:template>
+
+  <xsl:template name="tasklink">
+    <xsl:param name="number"/>
+    <xsl:param name="sys_id"/>
+    <xsl:variable name="base">
+      <xsl:text>mit.service-now.com/task.do?sys_id=</xsl:text>
+    </xsl:variable>
+    <xsl:variable name="addr"
+      select="concat('https://',$base,$sys_id)" />
+    <xsl:element name="a">
+      <xsl:attribute name="href">
+        <xsl:value-of select="$addr" />
+      </xsl:attribute>
+      <xsl:value-of select="$number" />
+    </xsl:element>
   </xsl:template>
 
 </xsl:stylesheet>

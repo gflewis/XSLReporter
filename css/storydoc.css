@@ -91,6 +91,8 @@ table.form th.labl {
   font-weight: bold;
   text-align: right;
   vertical-align: top;
+  border-collapse: collapse;
+  border-right: 1px solid #ecc6ec;
 }
 
 table.form td.data {
