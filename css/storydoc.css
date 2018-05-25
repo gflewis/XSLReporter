@@ -51,6 +51,12 @@ div.story {
   margin-bottom: 54px;
 }
 
+ul, ol {
+  margin-left: 0px;
+  padding-left: 0px;
+  list-style-position: inside;
+}
+
 table.form {
   width: 90%;
   align: center;
@@ -89,6 +95,7 @@ table.form th.labl {
 
 table.form td.data {
   background-color: white;
+  font-size: 9pt;
 }
 
 tr.row-2col th.labl {
