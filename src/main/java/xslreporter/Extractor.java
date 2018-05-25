@@ -47,6 +47,7 @@ public class Extractor {
 	Document extract(String tablename, String query) throws IOException, SAXException {
 		String path = "api/now/table/" + tablename;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
+		params.add(new BasicNameValuePair("sysparm_display_value", "all"));
 		if (query != null) 
 			params.add(new BasicNameValuePair("sysparm_query", query));
 		URI uri = sn.getURI(path, params);
