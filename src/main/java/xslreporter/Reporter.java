@@ -33,7 +33,8 @@ public class Reporter {
 	final DocumentBuilder builder;
 	final Element root;
 	final File reportFile;
-	final File workDir;
+	File workDir;
+	File baseDir;
 	NodeList extractList;
 	
 	public static void main(String[] args) throws Exception {
@@ -41,14 +42,19 @@ public class Reporter {
 		options.addOption(Option.builder("r").longOpt("report").required(true).hasArg(true).
 				desc("Report file (XML)").build());
 		options.addOption(Option.builder("p").longOpt("profile").required(true).hasArg(true).
-				desc("Connection profile (Java properties)").build());		
+				desc("Connection profile (Java properties)").build());
+		options.addOption(Option.builder("w").longOpt("work").required(false).hasArg(true).
+				desc("Working directory").build();
+		options.addOption(Option.builder("b").longOpt("base").required(false).hasArg(true).build()
+				desc("Base directory").build();
 		DefaultParser parser = new DefaultParser();
 		CommandLine cmdline = parser.parse(options, args);
 		String profilename = cmdline.getOptionValue("p");
+		String reportfilename = cmdline.getOptionValue("r");
+		String workDirName = cmdline.getOptionValue("w");
 		System.out.println("profilename=" + profilename);
 		assert profilename != null;
 		File profile = new File(profilename);
-		String reportfilename = cmdline.getOptionValue("r");
 		assert reportfilename != null;
 		File report = new File(reportfilename);
 		Reporter reporter = new Reporter(profile, report);
@@ -136,6 +142,10 @@ public class Reporter {
 		System.out.println("transforming " + docFile + " to " + outFile);
 		StreamSource stylesource = new StreamSource(stylesheet);
 		Transformer transformer = transformerFactory.newTransformer(stylesource);
+		transformer.setParameter("report-name",  reportFile.getName());
+		transformer.setParameter("report-path",  reportFile.getAbsolutePath());
+		transformer.setParameter("work-dir", workDir.getAbsolutePath());
+		transformer.setParameter("base-dir", baseDir.);
 		StreamSource docSource = new StreamSource(docFile);
 		transformer.transform(docSource, new StreamResult(outFile));		
 	}
