@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<report name="release"
-      xslData="xsl/data2.xsl"
-      xslHtml="xsl/html2.xsl"
-      workDir="/Users/gflewis/workspace/XSLReporter/data/"
-      cssFile="css/storydoc.css"
-      cssXmlFile="storydoc_css.xml"
-      dataFile="${release}.xml"
-      htmlReport="${release}.html">
-  <extract tag="release" table="rm_release" query="number=${release}"
-    file="release.release.xml" />
-  <extract tag="story" table="rm_story" query="release.number=${release}"
-    file="release.story.xml" />
+<report name="release">
+  <parameter name="release" value="${release}" />
+  <parameter name="base" value="/Users/giles/workspace/XSLReporter" />
+  <parameter name="work" value="${base}/data" />
+  <parameter name="css" value="${base}/css/storydoc.css" />  
+  <extract tag="release" table="rm_release" query="number=${release}" output="${work}/${release}.release.xml" />
+  <extract tag="story" table="rm_story" query="release.number=${release}" output="${work}/${release}.story.xml" />
+  <transform xsl="${base}/xsl/data2.xsl" input="${report}" output="${work}/${release}.xml" />
+  <transform xsl="${base}/xsl/html2.xsl" input="${work}/${release}.xml" output="${work}/${release}.html" />
 </report>

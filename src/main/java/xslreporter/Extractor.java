@@ -1,6 +1,5 @@
 package xslreporter;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +43,7 @@ public class Extractor {
 		transformer = transformerFactory.newTransformer();
 	}
 	
-	Document extract(String tablename, String query) throws IOException, SAXException {
+	InputStream extract(String tablename, String query) throws IOException, SAXException {
 		String path = "api/now/table/" + tablename;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		params.add(new BasicNameValuePair("sysparm_display_value", "all"));
@@ -59,10 +58,12 @@ public class Extractor {
 		assert statusCode == 200;
 		HttpEntity responseEntity = response.getEntity();
 		InputStream content = responseEntity.getContent();
-		Document responseDoc = builder.parse(content);
-		return responseDoc;
+		return content;
+		// Document responseDoc = builder.parse(content);
+		// return responseDoc;
 	}
 	
+	/*
 	String asString(Document doc) throws TransformerException  {
 		DOMSource domSource = new DOMSource(doc);
 		StringWriter writer = new StringWriter();
@@ -80,5 +81,6 @@ public class Extractor {
 		Document doc = ex.extract(tablename,  query);
 		ex.transformer.transform(new DOMSource(doc), new StreamResult(System.out));
 	}
+	*/
 	
 }

@@ -1,5 +1,10 @@
 package xslreporter;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -21,7 +26,24 @@ public class Functions {
 		return value.length();
 	}
 
+	static public String include(String filename) throws IOException {
+		System.out.println("include " + filename);
+		assert filename != null;
+		assert filename.length() > 0;
+		StringBuffer content = new StringBuffer();
+		File inputFile = new File(filename);		
+		BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			content.append(line);
+			content.append('\n');			
+		}
+		reader.close();
+		return content.toString();
+	}
+	
 	static public String markdown(String value) {
+		assert value != null;		
 		if (parser == null) parser = Parser.builder().build();
 		if (renderer == null) renderer = HtmlRenderer.builder().build();			
 		Node document = parser.parse(value);

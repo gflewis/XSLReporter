@@ -5,14 +5,14 @@
     version="1.0">
   <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
 
-  <xsl:variable name="workDir" select="/data/@workDir" />
-  <xsl:variable name="cssData" select="/data/@cssData"/>
+  <xsl:param name="css" select="'css/storydoc.css'"/>
 
   <xsl:template match="/data">
     <html>
       <head>
         <style>
-          <xsl:value-of select="document($cssData)/content" />
+          <!--  <xsl:value-of select="document($cssData)/content" />  -->
+          <xsl:value-of select="f:include($css)" />
         </style>
       </head>
       <body id="content">
