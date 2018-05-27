@@ -5,13 +5,13 @@
     version="1.0">
   <xsl:output method="xml" indent="yes" omit-xml-declaration="no"/>
 
-  <xsl:param name="css" select="'css/storydoc.css'"/>
+  <xsl:param name="css">css/storydoc.css</xsl:param>
+  <xsl:param name="instance" />
 
   <xsl:template match="/data">
     <html>
       <head>
         <style>
-          <!--  <xsl:value-of select="document($cssData)/content" />  -->
           <xsl:value-of select="f:include($css)" />
         </style>
       </head>
@@ -108,11 +108,11 @@
   <xsl:template name="tasklink">
     <xsl:param name="number"/>
     <xsl:param name="sys_id"/>
-    <xsl:variable name="base">
-      <xsl:text>mit.service-now.com/task.do?sys_id=</xsl:text>
+    <xsl:variable name="addr">
+      <xsl:value-of select="$instance"/>
+      <xsl:text>task.do?sys_id=</xsl:text>
+      <xsl:value-of select="$sys_id"/>
     </xsl:variable>
-    <xsl:variable name="addr"
-      select="concat('https://',$base,$sys_id)" />
     <xsl:element name="a">
       <xsl:attribute name="href">
         <xsl:value-of select="$addr" />
