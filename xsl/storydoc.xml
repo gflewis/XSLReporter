@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report name="release">
-  <variable name="release" value="${release}" required="true"/>
+  <variable name="release" required="true"/>
   <variable name="work" value="/Users/giles/workspace/XSLReporter/data" />
   <variable name="output" value="/Users/giles/workspace/XSLReporter/data" />
   <variable name="css" value="css/storydoc.css" />
@@ -14,12 +14,12 @@
     <query>release.number=${release}</query>
     <output>${work}/${release}.story.xml</output>
   </extract>
-  <transform>
+  <transform id="data">
     <xsl>xsl/merge.xsl</xsl>
     <input>${report}</input>
     <output>${work}/${release}.xml</output>
   </transform>
-  <transform>
+  <transform id="html">
     <xsl>xsl/storydoc.xsl</xsl>
     <input>${work}/${release}.xml</input>
     <output>${output}/${release}.html</output>

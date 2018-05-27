@@ -40,10 +40,6 @@ public class Reporter {
 				desc("Report file (XML)").build());
 		options.addOption(Option.builder("p").longOpt("profile").required(true).hasArg(true).
 				desc("Connection profile (Java properties)").build());
-		options.addOption(Option.builder("w").longOpt("work").required(false).hasArg(true).
-				desc("Working directory").build());
-		options.addOption(Option.builder("b").longOpt("base").required(false).hasArg(true).
-				desc("Base directory").build());
 		DefaultParser parser = new DefaultParser();
 		CommandLine cmdline = parser.parse(options, args);
 		String profilename = cmdline.getOptionValue("p");
@@ -59,8 +55,11 @@ public class Reporter {
 	
 	Reporter(File profile, String reportName, List<String> args) throws Exception {		
 		reportFile = new File(reportName);
-		variables.put("report", reportName);
+		setVariable("report", reportName);
 		sn = new ServiceNow(profile);
+		String instance = sn.getURI("").toString();
+		setVariable("instance", instance);
+		
 		extractor = new Extractor(sn);
 		transformerFactory = TransformerFactory.newInstance();
 		
@@ -74,13 +73,17 @@ public class Reporter {
 			assert parts.length == 2;
 			String name = parts[0];
 			String value = parts[1];
-			System.out.println(name + "=" + value);
-			variables.put(name,  value);
+			setVariable(name,  value);
 		}
 	}
 	
 	static HashMap<String,String> getVariables() {
 		return variables;
+	}
+	
+	void setVariable(String name, String value) {
+		System.out.println(name + "=" + value);
+		variables.put(name,  value);
 	}
 	
 	private String substitute(String text) {
@@ -109,16 +112,23 @@ public class Reporter {
 	
 	void variable(Element node) {
 		String name = node.getAttributeValue("name");
-		String value = substitute(node.getAttributeValue("value"));
-		String strRequired = node.getAttributeValue("required");
-		if (strRequired != null && strRequired.length() > 0) {
-			Boolean required = new Boolean(substitute(strRequired));
+		String value = null;
+		String txtValue = node.getAttributeValue("value");
+		if (txtValue != null && txtValue.length() > 0) {
+			value = substitute(txtValue);
+			setVariable(name, value);
+		}
+		else {
+			value = variables.get(name);
+		}
+		String txtRequired = node.getAttributeValue("required");
+		if (txtRequired != null && txtRequired.length() > 0) {
+			Boolean required = new Boolean(substitute(txtRequired));
 			if (required) {
 				if (value==null || value.length()==0)
 					throw new IllegalArgumentException("Not initialized: " + name);
 			}
 		}
-		variables.put(name,  value);		
 	}
 	
 	void extract(Element node) throws Exception  {
@@ -162,10 +172,8 @@ public class Reporter {
 		for (Entry<String,String> entry : variables.entrySet()) {
 			String name = entry.getKey();
 			String value = entry.getValue();
-			System.out.print(name + "=" + value + " ");
 			transformer.setParameter(name,  value);
 		}
-		System.out.println();
 		StreamSource inStream = new StreamSource(inFile);
 		StreamResult outStream = new StreamResult(outFile);
 		transformer.transform(inStream,  outStream);

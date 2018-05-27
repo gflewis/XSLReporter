@@ -89,7 +89,7 @@ public class ServiceNow {
 		
 	URI getURI(String path, List<NameValuePair> params) {
 		assert path != null;
-		assert path.length() > 0;
+//		assert path.length() > 0;
 		URI result;
 		try {
 			String base = url.toString() + path;
