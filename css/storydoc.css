@@ -89,7 +89,6 @@ table.form th {
   background-color: #ecc6ec;
   font-size: 9pt;
   font-weight: bold;
-  text-align: right;
   vertical-align: top;
   border-collapse: collapse;
   border-right: 1px solid #ecc6ec;
@@ -108,16 +107,23 @@ tr.row-1col {
 
 tr.row-1col th.col-1h {
   width: 15%;
+  text-align: right;
 }
 
 tr.row-1col td.col-1d {
   width: 85%;
 }
 
+th.col-1n .label {
+  float: right;	
+  text-align: right;
+}
+
 /* two columns */
 
 tr.row-2col th.col-1h {
   width: 15%;
+  text-align: right;
 }
 
 tr.row-2col td.col-1d {
@@ -130,6 +136,7 @@ tr.row-2col .gully {
 
 tr.row-2col th.col-2h {
   width: 15%;
+  text-align: right;
 }
 
 tr.row-2col td.col-2d {
