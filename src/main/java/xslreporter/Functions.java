@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import org.apache.commons.text.StringSubstitutor;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -26,6 +27,11 @@ public class Functions {
 		return value.length();
 	}
 
+	static public String substitute(String text) {
+		StringSubstitutor sub = new StringSubstitutor(Reporter.getVariables());
+		return sub.replace(text);		
+	}
+	
 	static public String include(String filename) throws IOException {
 		System.out.println("include " + filename);
 		assert filename != null;

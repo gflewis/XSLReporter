@@ -25,16 +25,14 @@ import org.jdom2.input.SAXBuilder;
 
 public class Reporter {
 
-	final HashMap<String,String> parameters = new HashMap<String,String>();
+	static final HashMap<String,String> variables = new HashMap<String,String>();
+
 	final ServiceNow sn;
 	final Extractor extractor;
 	final TransformerFactory transformerFactory;
 	final File reportFile;
-	final StringSubstitutor substitutor;
 	final Document reportDoc;
 	final Element rootNode;
-	File workDir;
-	File baseDir;
 	
 	public static void main(String[] args) throws Exception {
 		Options options = new Options();
@@ -61,7 +59,7 @@ public class Reporter {
 	
 	Reporter(File profile, String reportName, List<String> args) throws Exception {		
 		reportFile = new File(reportName);
-		parameters.put("report", reportName);
+		variables.put("report", reportName);
 		sn = new ServiceNow(profile);
 		extractor = new Extractor(sn);
 		transformerFactory = TransformerFactory.newInstance();
@@ -77,12 +75,19 @@ public class Reporter {
 			String name = parts[0];
 			String value = parts[1];
 			System.out.println(name + "=" + value);
-			parameters.put(name,  value);
+			variables.put(name,  value);
 		}
-		substitutor = new StringSubstitutor(parameters);
 	}
 	
-
+	static HashMap<String,String> getVariables() {
+		return variables;
+	}
+	
+	private String substitute(String text) {
+		StringSubstitutor sub = new StringSubstitutor(variables);
+		return sub.replace(text);
+	}
+	
 	void processNodes() throws Exception {
 		List<Element> nodes = rootNode.getChildren();
 		for (int i = 0; i < nodes.size(); ++i) {
@@ -92,11 +97,8 @@ public class Reporter {
 	
 	void processNode(Element node) throws Exception {
 		String nodeName = node.getName();
-		if ("parameter".equals(nodeName)) {
-			String paramName = node.getAttributeValue("name");
-			String paramValue = substitutor.replace(node.getAttributeValue("value"));
-			parameters.put(paramName,  paramValue);
-		}
+		if ("variable".equals(nodeName)) 
+			variable(node);
 		else if ("extract".equals(nodeName)) 
 			extract(node);
 		else if ("transform".equals(nodeName)) 
@@ -104,25 +106,35 @@ public class Reporter {
 		else 
 			throw new IllegalArgumentException(nodeName);
 	}
-
-	String getAttr(Element node, String name) {
-		return substitutor.replace(node.getAttributeValue(name));
+	
+	void variable(Element node) {
+		String name = node.getAttributeValue("name");
+		String value = substitute(node.getAttributeValue("value"));
+		String strRequired = node.getAttributeValue("required");
+		if (strRequired != null && strRequired.length() > 0) {
+			Boolean required = new Boolean(substitute(strRequired));
+			if (required) {
+				if (value==null || value.length()==0)
+					throw new IllegalArgumentException("Not initialized: " + name);
+			}
+		}
+		variables.put(name,  value);		
 	}
 	
 	void extract(Element node) throws Exception  {
 		Boolean skip = false;
 		String skipAttr  = node.getAttributeValue("skip");
 		if (skipAttr != null && skipAttr.length() > 0)
-			skip = new Boolean(substitutor.replace(skipAttr));
-		String tag        = substitutor.replace(node.getAttributeValue("tag"));
-		String tableName  = substitutor.replace(node.getAttributeValue("table"));
-		String query      = substitutor.replace(node.getAttributeValue("query"));
-		String outputName = substitutor.replace(node.getAttributeValue("output"));
+			skip = new Boolean(substitute(skipAttr));
+		String id         = substitute(node.getAttributeValue("id"));
+		String tableName  = substitute(node.getChildText("table"));
+		String query      = substitute(node.getChildText("query"));
+		String outputName = substitute(node.getChildText("output"));
 		System.out.println(
 			String.format("extracting %s table=%s query=%s output=%s", 
-				tag, tableName, query, outputName) +	(skip ? " (skipped)" : ""));
+				id, tableName, query, outputName) +	(skip ? " (skipped)" : ""));
 		if (skip) return;
-		assert tag.length() > 0;
+		assert id.length() > 0;
 		assert tableName.length() > 0;
 		assert query.length() > 0;
 		assert outputName.length() > 0;
@@ -133,9 +145,9 @@ public class Reporter {
 	}
 	
 	void transform(Element node) throws Exception {
-		String xslName     = substitutor.replace(node.getAttributeValue("xsl"));
-		String inputName   = substitutor.replace(node.getAttributeValue("input"));
-		String outputName  = substitutor.replace(node.getAttributeValue("output"));
+		String xslName     = substitute(node.getChildText("xsl"));
+		String inputName   = substitute(node.getChildText("input"));
+		String outputName  = substitute(node.getChildText("output"));
 		System.out.println(
 			String.format("transforming xsl=%s input=%s output=%s", 
 					xslName, inputName, outputName));
@@ -147,7 +159,7 @@ public class Reporter {
 		File outFile = new File(outputName);
 		StreamSource xslSource = new StreamSource(xslFile);		
 		Transformer transformer = transformerFactory.newTransformer(xslSource);
-		for (Entry<String,String> entry : parameters.entrySet()) {
+		for (Entry<String,String> entry : variables.entrySet()) {
 			String name = entry.getKey();
 			String value = entry.getValue();
 			System.out.print(name + "=" + value + " ");
