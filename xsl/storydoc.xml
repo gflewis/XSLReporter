@@ -4,19 +4,19 @@
   <variable name="work" value="/Users/giles/workspace/XSLReporter/data" />
   <variable name="output" value="/Users/giles/workspace/XSLReporter/data" />
   <variable name="css" value="css/storydoc.css" />
-  <extract id="release">
+  <extract id="release" skip="true">
     <table>rm_release</table>
     <query>number=${release}</query>
     <output>${work}/${release}.release.xml</output>
   </extract>
-  <extract id="story">
+  <extract id="story" skip="true">
     <table>rm_story</table>
     <query>release.number=${release}</query>
     <output>${work}/${release}.story.xml</output>
   </extract>
   <transform id="data">
     <xsl>xsl/merge.xsl</xsl>
-    <input>${report}</input>
+    <input>${report-file}</input>
     <output>${work}/${release}.xml</output>
   </transform>
   <transform id="html">
@@ -24,4 +24,8 @@
     <input>${work}/${release}.xml</input>
     <output>${output}/${release}.html</output>
   </transform>
+  <html-to-pdf id="pdf">
+    <input>${output}/${release}.html</input>
+    <output>${output}/${release}.pdf</output>
+  </html-to-pdf>
 </report>

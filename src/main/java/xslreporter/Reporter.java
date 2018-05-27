@@ -23,6 +23,8 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 
+import com.openhtmltopdf.pdfboxout.PdfRendererBuilder;
+
 public class Reporter {
 
 	static final HashMap<String,String> variables = new HashMap<String,String>();
@@ -55,10 +57,10 @@ public class Reporter {
 	
 	Reporter(File profile, String reportName, List<String> args) throws Exception {		
 		reportFile = new File(reportName);
-		setVariable("report", reportName);
+		setVariable("report-file", reportName);
 		sn = new ServiceNow(profile);
 		String instance = sn.getURI("").toString();
-		setVariable("instance", instance);
+		setVariable("servicenow-url", instance);
 		
 		extractor = new Extractor(sn);
 		transformerFactory = TransformerFactory.newInstance();
@@ -106,6 +108,8 @@ public class Reporter {
 			extract(node);
 		else if ("transform".equals(nodeName)) 
 			transform(node);
+		else if ("html-to-pdf".equals(nodeName))
+			html2pdf(node);
 		else 
 			throw new IllegalArgumentException(nodeName);
 	}
@@ -179,4 +183,14 @@ public class Reporter {
 		transformer.transform(inStream,  outStream);
 	}
 	
+	void html2pdf(Element node) throws Exception {
+		String inputName   = substitute(node.getChildText("input"));
+		String outputName  = substitute(node.getChildText("output"));
+		FileOutputStream outStream = new FileOutputStream(outputName);
+        PdfRendererBuilder builder = new PdfRendererBuilder();
+		System.out.println(String.format("building PDF input=%s output=%s", inputName, outputName));
+        builder.withFile(new File(inputName));
+        builder.toStream(outStream);
+        builder.run();		
+	}
 }

@@ -59,7 +59,7 @@ ul, ol {
 
 table.form {
   width: 90%;
-  align: center;
+  margin-left: 5%;
   font-size: 10pt;
   border-collapse: collapse;
   border-style: solid;
@@ -85,7 +85,7 @@ table.form tr th,td {
   border-style: none;
 }
 
-table.form th.labl {
+table.form th {
   background-color: #ecc6ec;
   font-size: 9pt;
   font-weight: bold;
@@ -95,36 +95,48 @@ table.form th.labl {
   border-right: 1px solid #ecc6ec;
 }
 
-table.form td.data {
+table.form td {
   background-color: white;
   font-size: 9pt;
 }
 
-tr.row-2col th.labl {
-  width: 15%;
-}
-
-tr.row-2col td.data {
-  width: 30%;
-}
-
-tr.row-2col td.gully {
-  width: 10%;
-}
-
+/* one column */
 
 tr.row-1col {
   width: 100%;
 }
 
-tr.row-1col th.labl {
+tr.row-1col th.col-1h {
   width: 15%;
 }
 
-tr.row-1col td.data {
-  column-span: 4;
+tr.row-1col td.col-1d {
   width: 85%;
 }
+
+/* two columns */
+
+tr.row-2col th.col-1h {
+  width: 15%;
+}
+
+tr.row-2col td.col-1d {
+  width: 30%;
+}
+
+tr.row-2col .gully {
+  width: 10%;
+}
+
+tr.row-2col th.col-2h {
+  width: 15%;
+}
+
+tr.row-2col td.col-2d {
+  width: 30%;
+}
+
+
 
 footer {
   font-family: "Lucida Sans Unicode","Lucida Sans","Lucida Grande",Arial,sans-serif;
