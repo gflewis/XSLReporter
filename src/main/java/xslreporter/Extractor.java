@@ -52,8 +52,10 @@ public class Extractor {
 		URI uri = sn.getURI(path, params);
 		HttpGet request = new HttpGet(uri);
 		request.setHeader("Accept", "application/xml");
+		// System.out.println("extract " + uri.toString());
 		CloseableHttpResponse response = client.execute(request);		
-		StatusLine statusLine = response.getStatusLine();		
+		StatusLine statusLine = response.getStatusLine();
+		// System.out.println(statusLine);
 		int statusCode = statusLine.getStatusCode();
 		assert statusCode == 200;
 		HttpEntity responseEntity = response.getEntity();

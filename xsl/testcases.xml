@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report name="release">
+  <variable name="suite" required="true"/>
+  <variable name="work" value="/Users/gflewis/workspace/XSLReporter/data" />
+  <variable name="output" value="/Users/gflewis/workspace/XSLReporter/data" />
+  <variable name="css" value="css/storydoc.css" />
+  <extract id="suite">
+    <table>tm_test_wuite</table>
+    <query>number=${suite}</query>
+    <output>${work}/${suite}.suite.xml</output>
+  </extract>
+  <extract id="case">
+    <table>tm_test_case</table>
+    <query>tm_test_suite.number=${suite}</query>
+    <output>${work}/${suite}.case.xml</output>
+  </extract>
+  <extract id="test">
+    <table>tm_test</table>
+    <query></query>
+    <output>${work}/${suite}.test.xml</output>
+  </extract>
+  <!-- 
+  <transform id="data">
+    <xsl>xsl/merge.xsl</xsl>
+    <input>${report-file}</input>
+    <output>${work}/${release}.xml</output>
+  </transform>
+  <transform id="html">
+    <xsl>xsl/storydoc.xsl</xsl>
+    <input>${work}/${release}.xml</input>
+    <output>${output}/${release}.html</output>
+  </transform>
+  <html-to-pdf id="pdf">
+    <input>${output}/${release}.html</input>
+    <output>${output}/${release}.pdf</output>
+  </html-to-pdf>
+   -->
+</report>
