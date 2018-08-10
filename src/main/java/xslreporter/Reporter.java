@@ -29,7 +29,7 @@ public class Reporter {
 
 	static final HashMap<String,String> variables = new HashMap<String,String>();
 
-	final ServiceNow sn;
+	final ServiceNow sn;	
 	final Extractor extractor;
 	final TransformerFactory transformerFactory;
 	final File reportFile;
@@ -42,27 +42,38 @@ public class Reporter {
 				desc("Report file (XML)").build());
 		options.addOption(Option.builder("p").longOpt("profile").required(true).hasArg(true).
 				desc("Connection profile (Java properties)").build());
+		options.addOption(Option.builder("x").longOpt("xml").required(false).hasArg(false).
+				desc("XML Web Service format").build());
+		options.addOption(Option.builder("u").longOpt("unload").required(false).hasArg(false).
+				desc("XML Unload Format").build());
 		DefaultParser parser = new DefaultParser();
 		CommandLine cmdline = parser.parse(options, args);
 		String profilename = cmdline.getOptionValue("p");
 		String reportfilename = cmdline.getOptionValue("r");
-		System.out.println("profilename=" + profilename);
+		Extractor.Format format = Extractor.Format.REST;
+		if (cmdline.hasOption("x")) format = Extractor.Format.XML;
+		if (cmdline.hasOption("u")) format = Extractor.Format.UNLOAD;
+		
+		System.out.println("profilename=" + profilename + " format=" + format);
 		assert profilename != null;
 		File profile = new File(profilename);
 		assert reportfilename != null;
 		List<String> reportArgs = cmdline.getArgList();
-		Reporter reporter = new Reporter(profile, reportfilename, reportArgs);
+		Reporter reporter = new Reporter(profile, reportfilename, reportArgs, format);
 		reporter.processNodes();
 	}
 	
-	Reporter(File profile, String reportName, List<String> args) throws Exception {		
+	Reporter(File profile, String reportName, 
+				List<String> args, 
+				Extractor.Format format) 
+			throws Exception {		
 		reportFile = new File(reportName);
 		setVariable("report-file", reportName);
 		sn = new ServiceNow(profile);
 		String instance = sn.getURI("").toString();
 		setVariable("servicenow-url", instance);
 		
-		extractor = new Extractor(sn);
+		extractor = new Extractor(sn, format);
 		transformerFactory = TransformerFactory.newInstance();
 		
 		SAXBuilder builder = new SAXBuilder();
@@ -156,6 +167,7 @@ public class Reporter {
 		FileOutputStream outStream = new FileOutputStream(outputFile);
 		InputStream inStream = extractor.extract(tableName, query);
 		IOUtils.copy(inStream,  outStream);
+		extractor.closeRequest();
 	}
 	
 	void transform(Element node) throws Exception {
