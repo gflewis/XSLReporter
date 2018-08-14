@@ -1,5 +1,7 @@
 package xslreporter;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -11,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -19,7 +22,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.xml.sax.SAXException;
 
 public class Extractor {
@@ -30,7 +32,8 @@ public class Extractor {
 	static TransformerFactory transformerFactory = TransformerFactory.newInstance();
 	
 	final ServiceNow sn;
-	final Format format;
+	Format format = Format.REST;
+	
 	final CloseableHttpClient client;
 	final javax.xml.parsers.DocumentBuilder builder; 
 	final javax.xml.transform.Transformer transformer;	
@@ -38,17 +41,19 @@ public class Extractor {
 	HttpRequestBase request;
 	CloseableHttpResponse response;	
 	
-	Extractor(ServiceNow sn, Format format) throws ParserConfigurationException, TransformerException {
+	Extractor(ServiceNow sn) throws ParserConfigurationException, TransformerException {
 		this.sn = sn;
 		this.client = sn.getClient();
 		builder = builderFactory.newDocumentBuilder();
 		transformer = transformerFactory.newTransformer();
-		this.format = format;
 	}
 	
-	InputStream extract(String tablename, String query) throws IOException, SAXException {
+	void setFormat(Format format) {
+		this.format = format;
+	}
+
+	URI getURI(String tablename, String query) {
 		String path;
-		URI uri;
 		List<NameValuePair> params = new ArrayList<NameValuePair>();
 		switch (this.format) {
 		case REST:
@@ -74,7 +79,13 @@ public class Extractor {
 		default:
 			throw new AssertionError();
 		}
-		uri = sn.getURI(path, params);
+		return sn.getURI(path, params);
+		
+	}
+	
+	void extract(String tablename, String query, File output) 
+			throws IOException, SAXException {
+		URI uri = getURI(tablename, query);
 		request = new HttpGet(uri);			
 		request.setHeader("Accept", "application/xml");
 		// System.out.println("extract " + uri.toString());
@@ -85,16 +96,18 @@ public class Extractor {
 		int statusCode = statusLine.getStatusCode();
 		assert statusCode == 200;
 		HttpEntity responseEntity = response.getEntity();
-		InputStream content = responseEntity.getContent();
-		return content;
+		InputStream inStream = responseEntity.getContent();
+		FileOutputStream outStream = new FileOutputStream(output);
+		IOUtils.copy(inStream,  outStream);
+		response.close();
 	}
 	
+	/*
 	void closeRequest() throws IOException {
 		response.close();
 		request.releaseConnection();
 	}
 	
-	/*
 	String asString(Document doc) throws TransformerException  {
 		DOMSource domSource = new DOMSource(doc);
 		StringWriter writer = new StringWriter();

@@ -19,7 +19,7 @@
     <query></query>
     <output>${work}/${suite}.test.xml</output>
   </extract>
-  <transform id="data">
+  <transform id="data" skip="true">
     <xsl>xsl/merge.xsl</xsl>
     <input>${report-file}</input>
     <output>${work}/${suite}.xml</output>

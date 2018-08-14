@@ -2,7 +2,6 @@ package xslreporter;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -16,7 +15,6 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.text.StringSubstitutor;
 
 import org.jdom2.Document;
@@ -76,7 +74,7 @@ public class Reporter {
 		String instance = sn.getURI("").toString();
 		setVariable("servicenow-url", instance);
 		
-		extractor = new Extractor(sn, format);
+		extractor = new Extractor(sn);
 		transformerFactory = TransformerFactory.newInstance();
 		
 		SAXBuilder builder = new SAXBuilder();
@@ -167,10 +165,7 @@ public class Reporter {
 		assert query.length() > 0;
 		assert outputName.length() > 0;
 		File outputFile = new File(outputName);
-		FileOutputStream outStream = new FileOutputStream(outputFile);
-		InputStream inStream = extractor.extract(tableName, query);
-		IOUtils.copy(inStream,  outStream);
-		extractor.closeRequest();
+		extractor.extract(tableName, query, outputFile);
 	}
 	
 	void transform(Element node) throws Exception {
