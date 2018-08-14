@@ -57,46 +57,43 @@ ul, ol {
   list-style-position: inside;
 }
 
-table.form {
+table {
   width: 90%;
   margin-left: 5%;
   font-size: 10pt;
   border-collapse: collapse;
   border-style: solid;
-  border-width: 2pt;
-  border-color: #ecc6ec;
+  border-width: 1pt;
+  border-color: black;
 }
 
-tr.title td.title {
-  background-color: #f2d9f2;
-  font-size: 12pt;
-  font-weight: bold;
-}
 
-table.form tr {
+table tr {
   border-style: solid;
   border-width: 1px;
   border-color: white;
-  border-color: #ecc6ec;
+  border-color: black;
 }
 
-table.form tr th,td {
+table tr th,td {
   padding: 4pt;
   border-style: none;
+  text-align: left;
 }
 
-table.form th {
-  background-color: #ecc6ec;
+table th {
   font-size: 9pt;
   font-weight: bold;
   vertical-align: top;
   border-collapse: collapse;
-  border-right: 1px solid #ecc6ec;
+  border: 1px solid black;
 }
 
-table.form td {
+table td {
   background-color: white;
   font-size: 9pt;
+  border: 1px solid black;
+  vertical-align: top;
 }
 
 /* one column */

@@ -16,7 +16,7 @@
         </style>
       </head>
       <body id="content">
-        <table border="1">
+        <table>
           <xsl:apply-templates select="case"/>
         </table>
       </body>
@@ -27,19 +27,37 @@
 
   <xsl:template match="case">
     <tr>      
-      <td><xsl:value-of select="number"/></td>
-      <td><xsl:value-of select="short_description"/></td>
+      <td colspan="1"><xsl:value-of select="number"/></td>
+      <td colspan="2"><xsl:value-of select="short_description"/></td>
+    </tr>
+    <tr>
+      <td>&#160;</td>
+      <th>Test</th>
+      <th>Expected Result</th>
     </tr>
     <xsl:variable name="casenumber" select="@number" />
-    <xsl:apply-templates select="/data/test[tm_test_case=$casenumber]"/>
+    <xsl:apply-templates select="/data/test[tm_test_case=$casenumber]">
+      <xsl:sort select="order"/>
+    </xsl:apply-templates>
+    <tr>
+      <td colspan="3">&#160;</td>
+    </tr>
   </xsl:template>
   
   <xsl:template match="test">
     <tr>
-      <td><xsl:value-of select="number"/></td>
+      <td style="text-align: right;"><xsl:value-of select="order"/></td>
+      <td><xsl:value-of select="f:markdown(test)" disable-output-escaping="yes"/></td>
+      <td><xsl:value-of select="f:markdown(expected_result)" disable-output-escaping="yes"/></td>
     </tr>
+    <xsl:if test="test_description != 'null'">
+      <tr>
+        <td colspan="1">&#160;</td>
+        <td colspan="2"><xsl:value-of select="test_description" disable-output-escaping="yes"/></td>
+      </tr>    
+    </xsl:if>
   </xsl:template>
-  
+    
   <xsl:template match="*">
     <xsl:message terminate="no">
       WARNING: Unmatched element:

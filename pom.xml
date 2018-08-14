@@ -5,7 +5,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>XSLReporter</groupId>
   <artifactId>XSLReporter</artifactId>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
 
   <properties>
     <open-html-to-pdf-version>0.0.1-RC13</open-html-to-pdf-version>

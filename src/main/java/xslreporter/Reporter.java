@@ -68,6 +68,9 @@ public class Reporter {
 				Extractor.Format format) 
 			throws Exception {		
 		reportFile = new File(reportName);
+		setVariable("user.dir", System.getProperty("user.dir"));
+		setVariable("user.home", System.getProperty("user.home"));
+		setVariable("user.name", System.getProperty("user.name"));
 		setVariable("report-file", reportName);
 		sn = new ServiceNow(profile);
 		String instance = sn.getURI("").toString();

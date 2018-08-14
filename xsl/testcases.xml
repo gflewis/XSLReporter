@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <report name="release">
   <variable name="suite" required="true"/>
-  <variable name="work" value="/Users/gflewis/workspace/XSLReporter/data" />
-  <variable name="output" value="/Users/gflewis/workspace/XSLReporter/data" />
-  <variable name="css" value="css/testcases.css" />
+  <variable name="work" value="${user.dir}/data" />
+  <variable name="output" value="${user.dir}/data" />
+  <variable name="css" value="${user.dir}/css/testcases.css" />
   <extract id="suite" skip="true">
     <table>tm_test_suite</table>
     <query>number=${suite}</query>
