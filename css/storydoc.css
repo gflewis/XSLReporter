@@ -34,6 +34,15 @@
 
 }
 
+@page {
+	
+	size: letter portrait;
+	
+	@bottom-center {
+		content: "Page " counter(page) " of " counter(pages);
+	}
+}
+
 /* colors are based on #993399 */
 
 article {
