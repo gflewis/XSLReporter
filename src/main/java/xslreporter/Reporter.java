@@ -69,10 +69,14 @@ public class Reporter {
 		setVariable("user.dir", System.getProperty("user.dir"));
 		setVariable("user.home", System.getProperty("user.home"));
 		setVariable("user.name", System.getProperty("user.name"));
-		setVariable("report-file", reportName);
 		sn = new ServiceNow(profile);
 		String instance = sn.getURI("").toString();
+		// old names
+		setVariable("report-file", reportName);
 		setVariable("servicenow-url", instance);
+		// new names
+		setVariable("report.file", reportName);
+		setVariable("servicenow.url", instance);
 		
 		extractor = new Extractor(sn);
 		transformerFactory = TransformerFactory.newInstance();
@@ -148,18 +152,14 @@ public class Reporter {
 	}
 	
 	void extract(Element node) throws Exception  {
-		Boolean skip = false;
-		String skipAttr  = node.getAttributeValue("skip");
-		if (skipAttr != null && skipAttr.length() > 0)
-			skip = new Boolean(substitute(skipAttr));
+		if (getSkip(node)) return;
 		String id         = substitute(node.getAttributeValue("id"));
 		String tableName  = substitute(node.getChildText("table"));
 		String query      = substitute(node.getChildText("query"));
 		String outputName = substitute(node.getChildText("output"));
 		System.out.println(
 			String.format("extracting %s table=%s query=%s output=%s", 
-				id, tableName, query, outputName) +	(skip ? " (skipped)" : ""));
-		if (skip) return;
+				id, tableName, query, outputName));
 		assert id.length() > 0;
 		assert tableName.length() > 0;
 		assert query.length() > 0;
@@ -169,6 +169,7 @@ public class Reporter {
 	}
 	
 	void transform(Element node) throws Exception {
+		if (getSkip(node)) return;
 		String xslName     = substitute(node.getChildText("xsl"));
 		String inputName   = substitute(node.getChildText("input"));
 		String outputName  = substitute(node.getChildText("output"));
@@ -194,6 +195,7 @@ public class Reporter {
 	}
 	
 	void html2pdf(Element node) throws Exception {
+		if (getSkip(node)) return;
 		String inputName   = substitute(node.getChildText("input"));
 		String outputName  = substitute(node.getChildText("output"));
 		FileOutputStream outStream = new FileOutputStream(outputName);
@@ -203,4 +205,13 @@ public class Reporter {
         builder.toStream(outStream);
         builder.run();		
 	}
+
+	private boolean getSkip(Element node) {
+		Boolean skip = false;
+		String skipAttr  = node.getAttributeValue("skip");
+		if (skipAttr != null && skipAttr.length() > 0)
+			skip = new Boolean(substitute(skipAttr));
+		return skip;
+	}
+			
 }

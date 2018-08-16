@@ -1,0 +1,93 @@
+@CHARSET "ISO-8859-1";
+
+@media screen {
+  div.page-footer {display: none}
+}
+
+@media print {
+
+  article {
+    page-break-inside: avoid;
+  }
+
+  div.release {
+    page-break-inside: avoid;
+  }
+
+  div.story {
+    page-break-inside: avoid;
+  }
+
+}
+
+@page {
+	
+	size: letter portrait;
+	
+	@bottom-center {
+		content: "Page " counter(page) " of " counter(pages);
+	}
+}
+
+/* colors are based on #993399 */
+
+
+.seq {
+  display: none;
+}
+
+.form {
+  display: table;
+  font-family: "Lucida Sans Unicode","Lucida Sans","Lucida Grande",Arial,sans-serif;
+  margin-bottom: 20pt;
+  clear: both;
+  width: 100%;
+  background-color: red;
+  border: 2pt solid blue;
+}
+
+.row {
+  display: table-row;
+  clear: both;
+  padding: 2pt;
+  margin-top: 2pt;
+  border: 2pt solid plum;
+  background-color: green;
+}
+
+.labl {
+  display: table-cell;
+  float: left;
+  width: 15%;
+  background-color: darkgray;
+}
+
+.row.head {
+  background-color: lightgray;
+}
+
+.text {
+  display: table-cell;
+  float: left;
+  vertical-align: top;
+  background-color: whitesmoke; 
+}
+
+.text.col1 {
+  width: 40%;
+}
+
+.text.col2 {
+  width: 30%;
+}
+
+.text.full {
+  float: left;
+  width: 85%;	
+}
+
+ul, ol {
+  margin-left: 0px;
+  padding-left: 0px;
+  list-style-position: inside;
+}

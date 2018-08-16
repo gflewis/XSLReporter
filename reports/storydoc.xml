@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report name="release">
+
+  <variable name="release" required="true"/>
+  <variable name="work" value="${user.dir}/data" />
+  <variable name="output" value="${user.dir}/data" />
+  <variable name="css-file" value="${user.dir}/reports/storydoc.css" />
+  
+  <extract id="release" skip="true">
+    <table>rm_release</table>
+    <query>number=${release}</query>
+    <output>${work}/${release}.release.xml</output>
+  </extract>
+  <extract id="story" skip="true">
+    <table>rm_story</table>
+    <query>release.number=${release}</query>
+    <output>${work}/${release}.story.xml</output>
+  </extract>
+  
+  <transform id="merge" skip="true">
+    <xsl>reports/merge.xsl</xsl>
+    <input>${report-file}</input>
+    <output>${work}/${release}.xml</output>
+  </transform>
+  
+  <transform id="html">
+    <xsl>reports/storydoc.xsl</xsl>
+    <input>${work}/${release}.xml</input>
+    <output>${output}/${release}.html</output>
+  </transform>
+  
+  <html-to-pdf id="pdf" skip="true">
+    <input>${output}/${release}.html</input>
+    <output>${output}/${release}.pdf</output>
+  </html-to-pdf>
+</report>
